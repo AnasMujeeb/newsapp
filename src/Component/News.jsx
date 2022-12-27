@@ -21,12 +21,13 @@ export default class News extends Component {
     })
     const data = await fetch(url)
     const parsedData = await data.json()
-    console.log(parsedData.articles.length)
+    console.log(parsedData)
     this.setState({
       articles: parsedData.articles,
       loading: false,
-      totalResult : parsedData.totalResult
+      totalResult : parsedData.totalResults
     })
+    
   }
  
   // async preBtnHandler(){
@@ -61,13 +62,15 @@ export default class News extends Component {
     this.setState({
       page : this.state.page + 1
     })
-    const url = `https://newsapi.org/v2/top-headlines?country=us&category=General&apiKey=e1d5f921911a46f48022936125f06baa&page=${this.state.page}&pageSize=9`
+    const url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.props.category}&apiKey=e1d5f921911a46f48022936125f06baa&page=${this.state.page + 1}&pageSize=9`
     const data = await fetch(url)
     const newData = await data.json()
-    console.log(newData.articles)
+    console.log(newData)
     this.setState({
       articles: this.state.articles.concat(newData.articles),
+      totalResult : newData.totalResults
     })
+    // console.log(this.state.totalResult, this.state.articles.length)
   }
 
   render() {
@@ -79,12 +82,13 @@ export default class News extends Component {
         this.state.loading ? 
        <Loader/>
         : <>
+        <div className='' id=''></div>
         <div className='container my-4'>
         <h1>News App</h1>
           <InfiniteScroll 
           dataLength={this.state.articles.length}
-          next={this.fetchMoreData}
-          hasMore={true}
+          next={()=>this.fetchMoreData()}
+          hasMore={this.state.articles.length !== this.state.totalResult}
           loader={<h4 className='container text-center'>Loading...</h4>}
           >
         <div className='d-flex flex-row justify-content-around flex-wrap'>
@@ -94,12 +98,12 @@ export default class News extends Component {
           }
         </div>
           </InfiniteScroll>
-        <div className='d-flex justify-content-between '>
+        {/* <div className='d-flex justify-content-between '>
 
         <button disabled={this.state.page <= 1 ? true : false} type="button" class="btn btn-dark" onClick={()=>this.preBtnHandler()}>&larr; Previous</button>
         <button disabled={this.state.page + 1 > Math.ceil(68/9) ? true : false} type="button" class="btn btn-dark" onClick={()=>this.nextBtnHandler()}>Next &rarr;</button>
        
-        </div>
+        </div> */}
       </div>
 
         </>
